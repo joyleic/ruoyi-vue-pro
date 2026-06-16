@@ -2,7 +2,8 @@ package cn.iocoder.yudao.module.erp.service.purchase;
 
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInPageReqVO;
-import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInSaveReqVO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpGrainPurchaseSaveReqVO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.pay.PurchasePayVo;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
 
@@ -24,14 +25,14 @@ public interface ErpPurchaseInService {
      * @param createReqVO 创建信息
      * @return 编号
      */
-    Long createPurchaseIn(@Valid ErpPurchaseInSaveReqVO createReqVO);
+    Long createPurchaseIn(@Valid ErpGrainPurchaseSaveReqVO createReqVO);
 
     /**
      * 更新采购入库
      *
      * @param updateReqVO 更新信息
      */
-    void updatePurchaseIn(@Valid ErpPurchaseInSaveReqVO updateReqVO);
+    void updatePurchaseIn(@Valid ErpGrainPurchaseSaveReqVO updateReqVO);
 
     /**
      * 更新采购入库的状态
@@ -97,5 +98,13 @@ public interface ErpPurchaseInService {
      * @return 采购入库项 List
      */
     List<ErpPurchaseInItemDO> getPurchaseInItemListByInIds(Collection<Long> inIds);
+
+    /**
+     * 创建采购入库
+     *
+     * @param createReqVO 创建信息
+     * @return 编号
+     */
+    Long createPurchasePay(@Valid PurchasePayVo createReqVO);
 
 }

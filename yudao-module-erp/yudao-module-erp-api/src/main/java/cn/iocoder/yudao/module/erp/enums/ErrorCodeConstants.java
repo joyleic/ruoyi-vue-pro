@@ -9,6 +9,10 @@ import cn.iocoder.yudao.framework.common.exception.ErrorCode;
  */
 public interface ErrorCodeConstants {
 
+
+    ErrorCode FEED_ENTER_NOT_EXISTS = new ErrorCode(1_030_100_000, "饲料谷信息入库不存在");
+    ErrorCode VEHILCE_NOT_EXISTS = new ErrorCode(1_030_100_000, "车辆信息不存在");
+
     // ========== ERP 供应商（1-030-100-000） ==========
     ErrorCode SUPPLIER_NOT_EXISTS = new ErrorCode(1_030_100_000, "供应商不存在");
     ErrorCode SUPPLIER_NOT_ENABLE = new ErrorCode(1_030_100_000, "供应商({})未启用");

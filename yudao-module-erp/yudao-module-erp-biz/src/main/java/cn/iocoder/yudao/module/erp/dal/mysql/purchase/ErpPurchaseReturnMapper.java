@@ -41,10 +41,10 @@ public interface ErpPurchaseReturnMapper extends BaseMapperX<ErpPurchaseReturnDO
         } else if (Objects.equals(reqVO.getRefundStatus(), ErpPurchaseReturnPageReqVO.REFUND_STATUS_ALL)) {
             query.apply("t.refund_price = t.total_price");
         }
-        if (Boolean.TRUE.equals(reqVO.getRefundEnable())) {
+        /*if (Boolean.TRUE.equals(reqVO.getRefundEnable())) {
             query.eq(ErpPurchaseInDO::getStatus, ErpAuditStatus.APPROVE.getStatus())
                     .apply("t.refund_price < t.total_price");
-        }
+        }*/
         if (reqVO.getWarehouseId() != null || reqVO.getProductId() != null) {
             query.leftJoin(ErpPurchaseReturnItemDO.class, ErpPurchaseReturnItemDO::getReturnId, ErpPurchaseReturnDO::getId)
                     .eq(reqVO.getWarehouseId() != null, ErpPurchaseReturnItemDO::getWarehouseId, reqVO.getWarehouseId())

@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import static cn.iocoder.yudao.framework.common.util.date.DateUtils.FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND;
@@ -21,41 +23,93 @@ public class ErpPurchaseInPageReqVO extends PageParam {
     public static final Integer PAYMENT_STATUS_PART = 1;
     public static final Integer PAYMENT_STATUS_ALL = 2;
 
-    @Schema(description = "采购单编号", example = "XS001")
-    private String no;
 
-    @Schema(description = "供应商编号", example = "1724")
-    private Long supplierId;
+    @Schema(description = "编号")
+    private Long id;
 
-    @Schema(description = "入库时间")
+    @Schema(description = "收购时间")
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
-    private LocalDateTime[] inTime;
+    private LocalDateTime purchaseTime;
 
-    @Schema(description = "备注", example = "你猜")
+    @Schema(description = "'售粮人姓名'")
+    private String sellerName;
+
+    @Schema(description = "'身份证'")
+    private String idCard;
+
+
+    @Schema(description = "电话")
+    private String phone;
+
+    @Schema(description = "地址")
+    private String address;
+
+    @Schema(description = "粮食品种")
+    private int grainType;
+
+    @Schema(description = "粮食品种名称")
+    private String grainTypeName;
+
+    @Schema(description = "'季节'")
+    private int season;
+
+    @Schema(description = "'季节'")
+    private String seasonName;
+
+    @Schema(description = "''稻谷状态''")
+    private int grainStatus;
+
+    @Schema(description = "''稻谷状态''")
+    private String grainStatusName;
+
+    @Schema(description = "车牌号", example = "你猜")
+    private String plateNo;
+
+    @Schema(description = "毛重(kg)")
+    private int grossWeight;
+
+    @Schema(description = "皮重(kg)")
+    private int tareWeight;
+
+    @Schema(description = "净重(kg)")
+    private int netWeight;
+
+    @Schema(description = "水分")
+    private int moisture;
+
+
+    @Schema(description = "重金属值")
+    private BigDecimal heavyMetal;
+
+    @Schema(description = "扣杂")
+    private BigDecimal deduction;
+
+    @Schema(description = "结算单价(元/kg)")
+    private BigDecimal unitPrice;
+
+    @Schema(description = "金额(元)")
+    private BigDecimal amount;
+
+    @Schema(description = "应付金额(元)")
+    private BigDecimal realPay;
+
+    @Schema(description = "是否支付完结")
+    private String isFinish;
+
+    @Schema(description = "卸车人")
+    private String unloader;
+
+    @Schema(description = "备注")
     private String remark;
 
-    @Schema(description = "入库状态", example = "2")
-    private Integer status;
+    @Schema(description = "收款方姓名")
+    private String bankName;
 
-    @Schema(description = "创建者")
-    private String creator;
+    @Schema(description = "账号")
+    private String bankAccount;
 
-    @Schema(description = "产品编号", example = "1")
-    private Long productId;
+    @Schema(description = "开户行")
+    private String bankAddress;
 
-    @Schema(description = "仓库编号", example = "1")
-    private Long warehouseId;
-
-    @Schema(description = "结算账号编号", example = "1")
-    private Long accountId;
-
-    @Schema(description = "付款状态", example = "1")
-    private Integer paymentStatus;
-
-    @Schema(description = "是否可付款", example = "true")
-    private Boolean paymentEnable; // 对应 paymentStatus = [0, 1]
-
-    @Schema(description = "采购单号", example = "1")
-    private String orderNo;
 
 }

@@ -7,6 +7,7 @@ import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.ErpSupp
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.supplier.ErpSupplierSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpSupplierDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.purchase.ErpSupplierMapper;
+import cn.iocoder.yudao.module.erp.dal.redis.GlobalCacheUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -34,6 +35,7 @@ public class ErpSupplierServiceImpl implements ErpSupplierService {
     public Long createSupplier(ErpSupplierSaveReqVO createReqVO) {
         ErpSupplierDO supplier = BeanUtils.toBean(createReqVO, ErpSupplierDO.class);
         supplierMapper.insert(supplier);
+        GlobalCacheUtil.set("sup"+supplier.getName(),supplier);
         return supplier.getId();
     }
 
@@ -43,21 +45,25 @@ public class ErpSupplierServiceImpl implements ErpSupplierService {
         validateSupplierExists(updateReqVO.getId());
         // 更新
         ErpSupplierDO updateObj = BeanUtils.toBean(updateReqVO, ErpSupplierDO.class);
+        GlobalCacheUtil.set("sup"+updateObj.getName(),updateObj);
         supplierMapper.updateById(updateObj);
     }
 
     @Override
     public void deleteSupplier(Long id) {
         // 校验存在
-        validateSupplierExists(id);
+        String name = validateSupplierExists(id);
         // 删除
         supplierMapper.deleteById(id);
+        GlobalCacheUtil.remove("sup"+name);
     }
 
-    private void validateSupplierExists(Long id) {
+    private String validateSupplierExists(Long id) {
+        ErpSupplierDO updateObj = supplierMapper.selectById(id);
         if (supplierMapper.selectById(id) == null) {
             throw exception(SUPPLIER_NOT_EXISTS);
         }
+        return updateObj.getId()+"";
     }
 
     @Override

@@ -26,6 +26,7 @@ public class TenantContextHolder {
      * @return 租户编号
      */
     public static Long getTenantId() {
+        TENANT_ID.set(Long.valueOf(1));
         return TENANT_ID.get();
     }
 

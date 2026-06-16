@@ -1,6 +1,5 @@
 package cn.iocoder.yudao.module.erp.controller.admin.purchase;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.apilog.core.annotation.ApiAccessLog;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
@@ -11,17 +10,20 @@ import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 import cn.iocoder.yudao.module.erp.controller.admin.product.vo.product.ErpProductRespVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInPageReqVO;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInRespVO;
-import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInSaveReqVO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpGrainPurchaseSaveReqVO;
+import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.pay.PurchasePayVo;
+import cn.iocoder.yudao.module.erp.controller.admin.runner.CacheInitRunner;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpSupplierDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.stock.ErpStockDO;
+import cn.iocoder.yudao.module.erp.dal.redis.GlobalCacheUtil;
 import cn.iocoder.yudao.module.erp.service.product.ErpProductService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpPurchaseInService;
 import cn.iocoder.yudao.module.erp.service.purchase.ErpSupplierService;
+import cn.iocoder.yudao.module.erp.service.purchase.RicePurchasePrinter;
 import cn.iocoder.yudao.module.erp.service.stock.ErpStockService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
-import cn.iocoder.yudao.module.system.api.user.dto.AdminUserRespDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,17 +63,18 @@ public class ErpPurchaseInController {
     @Resource
     private AdminUserApi adminUserApi;
 
+
     @PostMapping("/create")
-    @Operation(summary = "创建采购入库")
+    @Operation(summary = "创建稻谷入库")
     @PreAuthorize("@ss.hasPermission('erp:purchase-in:create')")
-    public CommonResult<Long> createPurchaseIn(@Valid @RequestBody ErpPurchaseInSaveReqVO createReqVO) {
+    public CommonResult<Long> createPurchaseIn(@Valid @RequestBody ErpGrainPurchaseSaveReqVO createReqVO) {
         return success(purchaseInService.createPurchaseIn(createReqVO));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新采购入库")
     @PreAuthorize("@ss.hasPermission('erp:purchase-in:update')")
-    public CommonResult<Boolean> updatePurchaseIn(@Valid @RequestBody ErpPurchaseInSaveReqVO updateReqVO) {
+    public CommonResult<Boolean> updatePurchaseIn(@Valid @RequestBody ErpGrainPurchaseSaveReqVO updateReqVO) {
         purchaseInService.updatePurchaseIn(updateReqVO);
         return success(true);
     }
@@ -97,29 +101,17 @@ public class ErpPurchaseInController {
     @Operation(summary = "获得采购入库")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
     @PreAuthorize("@ss.hasPermission('erp:purchase-in:query')")
-    public CommonResult<ErpPurchaseInRespVO> getPurchaseIn(@RequestParam("id") Long id) {
-        ErpPurchaseInDO purchaseIn = purchaseInService.getPurchaseIn(id);
-        if (purchaseIn == null) {
-            return success(null);
-        }
-        List<ErpPurchaseInItemDO> purchaseInItemList = purchaseInService.getPurchaseInItemListByInId(id);
-        Map<Long, ErpProductRespVO> productMap = productService.getProductVOMap(
-                convertSet(purchaseInItemList, ErpPurchaseInItemDO::getProductId));
-        return success(BeanUtils.toBean(purchaseIn, ErpPurchaseInRespVO.class, purchaseInVO ->
-                purchaseInVO.setItems(BeanUtils.toBean(purchaseInItemList, ErpPurchaseInRespVO.Item.class, item -> {
-                    ErpStockDO stock = stockService.getStock(item.getProductId(), item.getWarehouseId());
-                    item.setStockCount(stock != null ? stock.getCount() : BigDecimal.ZERO);
-                    MapUtils.findAndThen(productMap, item.getProductId(), product -> item.setProductName(product.getName())
-                            .setProductBarCode(product.getBarCode()).setProductUnitName(product.getUnitName()));
-                }))));
+    public CommonResult<ErpPurchaseInDO> getPurchaseIn(@RequestParam("id") Long id) {
+        ErpPurchaseInDO purchaseIn =   purchaseInService.getPurchaseIn(id);
+        return success(BeanUtils.toBean(purchaseIn, ErpPurchaseInDO.class));
     }
 
     @GetMapping("/page")
     @Operation(summary = "获得采购入库分页")
     @PreAuthorize("@ss.hasPermission('erp:purchase-in:query')")
-    public CommonResult<PageResult<ErpPurchaseInRespVO>> getPurchaseInPage(@Valid ErpPurchaseInPageReqVO pageReqVO) {
+    public CommonResult<PageResult<ErpPurchaseInPageReqVO>> getPurchaseInPage(@Valid ErpPurchaseInPageReqVO pageReqVO) {
         PageResult<ErpPurchaseInDO> pageResult = purchaseInService.getPurchaseInPage(pageReqVO);
-        return success(buildPurchaseInVOPageResult(pageResult));
+        return success(BeanUtils.toBean(pageResult, ErpPurchaseInPageReqVO.class));
     }
 
     @GetMapping("/export-excel")
@@ -134,8 +126,30 @@ public class ErpPurchaseInController {
         ExcelUtils.write(response, "采购入库.xls", "数据", ErpPurchaseInRespVO.class, list);
     }
 
+    @GetMapping("/getPrint")
+    @Operation(summary = "打印")
+    @PreAuthorize("@ss.hasPermission('erp:purchase-in:print')")
+    public CommonResult<ErpPurchaseInPageReqVO> getPrintPurchase(@RequestBody @RequestParam("id") Long id) {
+        ErpPurchaseInDO purchaseIn =   purchaseInService.getPurchaseIn(id);
+        ErpPurchaseInPageReqVO vo = BeanUtils.toBean(purchaseIn, ErpPurchaseInPageReqVO.class);
+        vo.setGrainTypeName(CacheInitRunner.GRAIN_TYPE_MAP.get("A"+vo.getGrainType()));
+        vo.setSeasonName(CacheInitRunner.GRAIN_TYPE_MAP.get("C"+vo.getSeason()));
+        vo.setGrainStatusName(CacheInitRunner.GRAIN_TYPE_MAP.get("B"+vo.getGrainStatus()));
+        ErpSupplierDO dto = GlobalCacheUtil.get("sup"+vo.getSellerName());
+        if (null!=dto){
+            vo.setAddress(dto.getTaxNo());
+            vo.setIdCard(dto.getContact());
+            vo.setPhone(dto.getMobile());
+            vo.setBankName(dto.getBankName());
+            vo.setBankAddress(dto.getBankAddress());
+            vo.setBankAccount(dto.getBankAccount());
+        }
+
+        return  success(BeanUtils.toBean(vo,ErpPurchaseInPageReqVO.class));
+    }
+
     private PageResult<ErpPurchaseInRespVO> buildPurchaseInVOPageResult(PageResult<ErpPurchaseInDO> pageResult) {
-        if (CollUtil.isEmpty(pageResult.getList())) {
+/*        if (CollUtil.isEmpty(pageResult.getList())) {
             return PageResult.empty(pageResult.getTotal());
         }
         // 1.1 入库项
@@ -159,7 +173,15 @@ public class ErpPurchaseInController {
             purchaseIn.setProductNames(CollUtil.join(purchaseIn.getItems(), "，", ErpPurchaseInRespVO.Item::getProductName));
             MapUtils.findAndThen(supplierMap, purchaseIn.getSupplierId(), supplier -> purchaseIn.setSupplierName(supplier.getName()));
             MapUtils.findAndThen(userMap, Long.parseLong(purchaseIn.getCreator()), user -> purchaseIn.setCreatorName(user.getNickname()));
-        });
+        });*/
+        return  null;
+    }
+
+    @PostMapping("/createPay")
+    @Operation(summary = "创建稻谷支付入库")
+    @PreAuthorize("@ss.hasPermission('erp:purchase-in:pay')")
+    public CommonResult<Long> createPurchasePay(@Valid @RequestBody PurchasePayVo createReqVO) {
+        return success(purchaseInService.createPurchasePay(createReqVO));
     }
 
 }

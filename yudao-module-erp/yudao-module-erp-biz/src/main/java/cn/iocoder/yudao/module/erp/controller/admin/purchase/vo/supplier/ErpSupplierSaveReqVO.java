@@ -50,10 +50,9 @@ public class ErpSupplierSaveReqVO {
     private Integer status;
 
     @Schema(description = "排序", requiredMode = Schema.RequiredMode.REQUIRED, example = "10")
-    @NotNull(message = "排序不能为空")
     private Integer sort;
 
-    @Schema(description = "纳税人识别号", example = "91130803MA098BY05W")
+    @Schema(description = "售粮人地址", example = "91130803MA098BY05W")
     private String taxNo;
 
     @Schema(description = "税率", example = "10")

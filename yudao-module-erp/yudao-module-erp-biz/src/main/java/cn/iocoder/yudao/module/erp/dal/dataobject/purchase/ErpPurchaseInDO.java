@@ -2,9 +2,11 @@ package cn.iocoder.yudao.module.erp.dal.dataobject.purchase;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.finance.ErpAccountDO;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,8 +17,7 @@ import java.time.LocalDateTime;
  *
  * @author 芋道源码
  */
-@TableName(value = "erp_purchase_in")
-@KeySequence("erp_purchase_in_seq") // 用于 Oracle、PostgreSQL、Kingbase、DB2、H2 数据库的主键自增。如果是 MySQL 等数据库，可不写。
+@TableName(value = "grain_purchase")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -28,95 +29,96 @@ public class ErpPurchaseInDO extends BaseDO {
     /**
      * 编号
      */
-    @TableId
+    /**
+     * 主键ID
+     */
+    @TableId(type = IdType.AUTO)
     private Long id;
-    /**
-     * 采购入库单号
-     */
-    private String no;
-    /**
-     * 入库状态
-     *
-     * 枚举 {@link cn.iocoder.yudao.module.erp.enums.ErpAuditStatus}
-     */
-    private Integer status;
-    /**
-     * 供应商编号
-     *
-     * 关联 {@link ErpSupplierDO#getId()}
-     */
-    private Long supplierId;
-    /**
-     * 结算账户编号
-     *
-     * 关联 {@link ErpAccountDO#getId()}
-     */
-    private Long accountId;
-    /**
-     * 入库时间
-     */
-    private LocalDateTime inTime;
 
     /**
-     * 采购订单编号
-     *
-     * 关联 {@link ErpPurchaseOrderDO#getId()}
+     * 收购时间
      */
-    private Long orderId;
-    /**
-     * 采购订单号
-     *
-     * 冗余 {@link ErpPurchaseOrderDO#getNo()}
-     */
-    private String orderNo;
+    private LocalDateTime purchaseTime;
 
     /**
-     * 合计数量
+     * 售粮人姓名
      */
-    private BigDecimal totalCount;
-    /**
-     * 最终合计价格，单位：元
-     *
-     * totalPrice = totalProductPrice + totalTaxPrice - discountPrice + otherPrice
-     */
-    private BigDecimal totalPrice;
-    /**
-     * 已支付金额，单位：元
-     *
-     * 目的：和 {@link cn.iocoder.yudao.module.erp.dal.dataobject.finance.ErpFinancePaymentDO} 结合，记录已支付金额
-     */
-    private BigDecimal paymentPrice;
+    private String sellerName;
 
     /**
-     * 合计产品价格，单位：元
+     * 粮食品种
      */
-    private BigDecimal totalProductPrice;
-    /**
-     * 合计税额，单位：元
-     */
-    private BigDecimal totalTaxPrice;
-    /**
-     * 优惠率，百分比
-     */
-    private BigDecimal discountPercent;
-    /**
-     * 优惠金额，单位：元
-     *
-     * discountPrice = (totalProductPrice + totalTaxPrice) * discountPercent
-     */
-    private BigDecimal discountPrice;
-    /**
-     * 其它金额，单位：元
-     */
-    private BigDecimal otherPrice;
+    private String grainType;
 
     /**
-     * 附件地址
+     * 季节
      */
-    private String fileUrl;
+    private String season;
+
+    /**
+     * 稻谷状态
+     */
+    private String grainStatus;
+
+    /**
+     * 车牌号
+     */
+    private String plateNo;
+
+    /**
+     * 毛重(kg)
+     */
+    private BigDecimal grossWeight;
+
+    /**
+     * 皮重(kg)
+     */
+    private BigDecimal tareWeight;
+
+    /**
+     * 净重(kg)
+     */
+    private BigDecimal netWeight;
+
+    /**
+     * 水分
+     */
+    private BigDecimal moisture;
+
+    /**
+     * 重金属值
+     */
+    private BigDecimal heavyMetal;
+
+    /**
+     * 扣杂/元
+     */
+    private BigDecimal deduction;
+
+    /**
+     * 结算单价(元/kg)
+     */
+    private BigDecimal unitPrice;
+
+    /**
+     * 金额(元)
+     */
+    private BigDecimal amount;
+
+    /**
+     * 卸车人
+     */
+    private String unloader;
+
     /**
      * 备注
      */
     private String remark;
+
+    @Schema(description = "应付金额(元)")
+    private BigDecimal realPay;
+
+    @Schema(description = "是否支付完结")
+    private String isFinish;
 
 }

@@ -1,8 +1,6 @@
 package cn.iocoder.yudao.module.erp.service.finance;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.ObjectUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
@@ -10,8 +8,6 @@ import cn.iocoder.yudao.module.erp.controller.admin.finance.vo.payment.ErpFinanc
 import cn.iocoder.yudao.module.erp.controller.admin.finance.vo.payment.ErpFinancePaymentSaveReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.finance.ErpFinancePaymentDO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.finance.ErpFinancePaymentItemDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseReturnDO;
 import cn.iocoder.yudao.module.erp.dal.mysql.finance.ErpFinancePaymentItemMapper;
 import cn.iocoder.yudao.module.erp.dal.mysql.finance.ErpFinancePaymentMapper;
 import cn.iocoder.yudao.module.erp.dal.redis.no.ErpNoRedisDAO;
@@ -159,19 +155,7 @@ public class ErpFinancePaymentServiceImpl implements ErpFinancePaymentService {
     private List<ErpFinancePaymentItemDO> validateFinancePaymentItems(
             Long supplierId,
             List<ErpFinancePaymentSaveReqVO.Item> list) {
-        return convertList(list, o -> BeanUtils.toBean(o, ErpFinancePaymentItemDO.class, item -> {
-            if (ObjectUtil.equal(item.getBizType(), ErpBizTypeEnum.PURCHASE_IN.getType())) {
-                ErpPurchaseInDO purchaseIn = purchaseInService.validatePurchaseIn(item.getBizId());
-                Assert.equals(purchaseIn.getSupplierId(), supplierId, "供应商必须相同");
-                item.setTotalPrice(purchaseIn.getTotalPrice()).setBizNo(purchaseIn.getNo());
-            } else if (ObjectUtil.equal(item.getBizType(), ErpBizTypeEnum.PURCHASE_RETURN.getType())) {
-                ErpPurchaseReturnDO purchaseReturn = purchaseReturnService.validatePurchaseReturn(item.getBizId());
-                Assert.equals(purchaseReturn.getSupplierId(), supplierId, "供应商必须相同");
-                item.setTotalPrice(purchaseReturn.getTotalPrice().negate()).setBizNo(purchaseReturn.getNo());
-            } else {
-                throw new IllegalArgumentException("业务类型不正确：" + item.getBizType());
-            }
-        }));
+        return null;
     }
 
     private void updateFinancePaymentItemList(Long id, List<ErpFinancePaymentItemDO> newList) {
