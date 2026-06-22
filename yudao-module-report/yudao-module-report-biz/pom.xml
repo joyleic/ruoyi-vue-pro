@@ -53,12 +53,6 @@
             <artifactId>yudao-spring-boot-starter-mybatis</artifactId>
         </dependency>
 
-        <!-- Test 测试相关 -->
-        <dependency>
-            <groupId>cn.iocoder.boot</groupId>
-            <artifactId>yudao-spring-boot-starter-test</artifactId>
-        </dependency>
-
         <!-- 积木报表-->
         <dependency>
             <groupId>org.jeecgframework.jimureport</groupId>
