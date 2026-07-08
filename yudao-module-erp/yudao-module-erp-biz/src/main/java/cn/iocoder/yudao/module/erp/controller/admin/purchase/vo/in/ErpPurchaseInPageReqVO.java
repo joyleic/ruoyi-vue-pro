@@ -31,6 +31,10 @@ public class ErpPurchaseInPageReqVO extends PageParam {
     @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
     private LocalDateTime purchaseTime;
 
+    @Schema(description = "入库时间")
+    @DateTimeFormat(pattern = FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND)
+    private LocalDateTime[] inTime;
+
     @Schema(description = "'售粮人姓名'")
     private String sellerName;
 
@@ -45,19 +49,19 @@ public class ErpPurchaseInPageReqVO extends PageParam {
     private String address;
 
     @Schema(description = "粮食品种")
-    private int grainType;
+    private String grainType;
 
     @Schema(description = "粮食品种名称")
     private String grainTypeName;
 
     @Schema(description = "'季节'")
-    private int season;
+    private Integer season;
 
     @Schema(description = "'季节'")
     private String seasonName;
 
     @Schema(description = "''稻谷状态''")
-    private int grainStatus;
+    private Integer grainStatus;
 
     @Schema(description = "''稻谷状态''")
     private String grainStatusName;
@@ -66,16 +70,22 @@ public class ErpPurchaseInPageReqVO extends PageParam {
     private String plateNo;
 
     @Schema(description = "毛重(kg)")
-    private int grossWeight;
+    private Integer grossWeight;
 
     @Schema(description = "皮重(kg)")
-    private int tareWeight;
+    private Integer tareWeight;
 
     @Schema(description = "净重(kg)")
-    private int netWeight;
+    private Integer netWeight;
+
+    @Schema(description = "纯净重(kg)")
+    private Integer pureWeight;
 
     @Schema(description = "水分")
-    private int moisture;
+    private Integer moisture;
+
+    @Schema(description = "水分扣重")
+    private Integer moistDeduction;
 
 
     @Schema(description = "重金属值")
@@ -83,6 +93,9 @@ public class ErpPurchaseInPageReqVO extends PageParam {
 
     @Schema(description = "扣杂")
     private BigDecimal deduction;
+
+    @Schema(description = "扣杂扣重")
+    private BigDecimal deductionKg;
 
     @Schema(description = "结算单价(元/kg)")
     private BigDecimal unitPrice;

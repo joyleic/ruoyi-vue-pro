@@ -97,7 +97,8 @@ public class ErpPurchaseInServiceImpl implements ErpPurchaseInService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePurchaseIn(List<Long> ids) {
-
+        purchasePayMapper.delete(ErpPayOrderDO::getOrderNo,ids.get(0));
+            purchaseInMapper.deleteByIds(ids);
     }
 
     private ErpPurchaseInDO validatePurchaseInExists(Long id) {

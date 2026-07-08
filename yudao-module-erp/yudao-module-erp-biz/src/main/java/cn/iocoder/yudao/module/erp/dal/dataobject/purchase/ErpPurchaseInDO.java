@@ -81,9 +81,19 @@ public class ErpPurchaseInDO extends BaseDO {
     private BigDecimal netWeight;
 
     /**
+     * 纯净重(kg)
+     */
+    private BigDecimal pureWeight;
+
+    /**
      * 水分
      */
     private BigDecimal moisture;
+
+    /**
+     * 水分扣重
+     */
+    private BigDecimal moistDeduction;
 
     /**
      * 重金属值
@@ -94,6 +104,11 @@ public class ErpPurchaseInDO extends BaseDO {
      * 扣杂/元
      */
     private BigDecimal deduction;
+
+    /**
+     * 扣杂扣重
+     */
+    private BigDecimal deductionKg;
 
     /**
      * 结算单价(元/kg)

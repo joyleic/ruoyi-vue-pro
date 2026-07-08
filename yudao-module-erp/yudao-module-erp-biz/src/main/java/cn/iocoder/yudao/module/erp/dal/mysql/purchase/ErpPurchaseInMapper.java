@@ -4,17 +4,11 @@ package cn.iocoder.yudao.module.erp.dal.mysql.purchase;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
-import cn.iocoder.yudao.framework.mybatis.core.query.MPJLambdaWrapperX;
 import cn.iocoder.yudao.module.erp.controller.admin.purchase.vo.in.ErpPurchaseInPageReqVO;
 import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpPurchaseInItemDO;
-import cn.iocoder.yudao.module.erp.dal.dataobject.purchase.ErpVehliceDO;
-import cn.iocoder.yudao.module.erp.enums.ErpAuditStatus;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * ERP 采购入库 Mapper
@@ -26,7 +20,10 @@ public interface ErpPurchaseInMapper extends BaseMapperX<ErpPurchaseInDO> {
 
     default PageResult<ErpPurchaseInDO> selectPage(ErpPurchaseInPageReqVO reqVO) {
         return selectPage(reqVO,new LambdaQueryWrapperX<ErpPurchaseInDO>()
-                .likeIfPresent(ErpPurchaseInDO::getSeason, reqVO.getSellerName())
+                .likeIfPresent(ErpPurchaseInDO::getSellerName, reqVO.getSellerName())
+                .likeIfPresent(ErpPurchaseInDO::getGrainType, reqVO.getGrainType())
+                .likeIfPresent(ErpPurchaseInDO::getIsFinish, reqVO.getIsFinish())
+                .betweenIfPresent(ErpPurchaseInDO::getPurchaseTime, reqVO.getInTime())
                 .orderByDesc(ErpPurchaseInDO::getId));
     }
 

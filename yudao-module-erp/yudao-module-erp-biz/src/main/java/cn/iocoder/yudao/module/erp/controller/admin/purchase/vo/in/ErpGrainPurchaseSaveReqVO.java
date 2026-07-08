@@ -6,7 +6,6 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Schema(description = "管理后台 - ERP 稻谷收购入库新增/修改 Request VO")
 @Data
@@ -45,8 +44,16 @@ public class ErpGrainPurchaseSaveReqVO {
     @Schema(description = "净重(kg)", requiredMode = Schema.RequiredMode.REQUIRED)
     private int netWeight;
 
+    @Schema(description = "纯净重(kg)", requiredMode = Schema.RequiredMode.REQUIRED)
+    private int pureWeight;
+
     @Schema(description = "水分", requiredMode = Schema.RequiredMode.REQUIRED)
     private int moisture;
+
+    @Schema(description = "水分扣重", requiredMode = Schema.RequiredMode.REQUIRED)
+    private int moistDeduction;
+
+
 
 
     @Schema(description = "重金属值", example = "7127")
@@ -54,6 +61,9 @@ public class ErpGrainPurchaseSaveReqVO {
 
     @Schema(description = "扣杂", example = "7127")
     private BigDecimal deduction;
+
+    @Schema(description = "杂质扣重", requiredMode = Schema.RequiredMode.REQUIRED)
+    private int deductionKg;
 
     @Schema(description = "结算单价(元/kg)", example = "7127")
     private BigDecimal unitPrice;
